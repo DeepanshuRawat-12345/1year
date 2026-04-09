@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Year ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #ff4b72;
+            --bg-color: #fff0f3;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease;
+        }
+
+        header { text-align: center; padding: 50px 20px 20px; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 4.5rem; color: var(--primary-color); margin: 0; text-shadow: 2px 2px 4px rgba(255, 75, 114, 0.1); }
+        p.subtitle { font-size: 1.1rem; color: #666; margin-top: 10px; font-weight: 300; }
+
+        /* Timer Section */
+        .counter-container {
+            background: white; padding: 25px 40px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 75, 114, 0.12); text-align: center; margin: 20px 0 30px;
+        }
+        .counter-title { margin-top: 0; color: #555; font-weight: 600; font-size: 1rem; margin-bottom: 20px; }
+        .time-box { display: flex; gap: 25px; font-size: 2.2rem; font-weight: 600; color: var(--primary-color); justify-content: center; }
+        .time-box div { display: flex; flex-direction: column; min-width: 70px; }
+        .time-box span { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 400; color: #888; margin-top: 5px; }
+
+        /* Voice Player */
+        .audio-wrapper { margin-bottom: 40px; opacity: 0.5; transition: opacity 0.4s ease; width: 300px; }
+        .audio-wrapper:hover, .audio-wrapper:active { opacity: 1; }
+        audio { width: 100%; height: 40px; border-radius: 30px; outline: none; }
+
+        /* Horizontal Scroll Gallery */
+        .gallery-wrapper { width: 100%; max-width: 1000px; margin-bottom: 50px; }
+        .scroll-wheel {
+            display: flex; overflow-x: auto; gap: 25px; padding: 20px 40px;
+            scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; 
+        }
+        .scroll-wheel::-webkit-scrollbar { display: none; }
+        .polaroid {
+            background: white; padding: 15px 15px 45px 15px; border-radius: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); flex: 0 0 280px; 
+            scroll-snap-align: center; text-align: center; transition: transform 0.3s ease;
+            transform: rotate(-1.5deg);
+        }
+        .polaroid:nth-child(even) { transform: rotate(2deg); }
+        .polaroid:hover { transform: scale(1.03) rotate(0deg); }
+        .polaroid img { width: 100%; height: 280px; object-fit: cover; border-radius: 2px; background-color: #f0f0f0; }
+
+        /* Final Message Section */
+        .finale-section { margin: 20px 0 80px; text-align: center; padding: 50px; background: white; border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); max-width: 600px; width: 90%; }
+        .finale-section h2 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--primary-color); margin: 0 0 10px 0; }
+        .reveal-btn {
+            background-color: var(--primary-color); color: white; border: none; padding: 18px 45px;
+            font-size: 1.2rem; font-weight: 600; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 75, 114, 0.3); transition: all 0.3s ease;
+            margin-top: 20px; font-family: 'Poppins', sans-serif;
+        }
+        .reveal-btn:hover { transform: translateY(-3px); background-color: #e63e62; }
+        
+        #message-container { display: none; margin-top: 30px; animation: slideUp 0.8s ease forwards; }
+        .love-letter { background: #fff9fa; padding: 35px; border-radius: 15px; border: 2px dashed #ffb3c6; text-align: left; }
+        .love-letter p { font-size: 1.05rem; color: #444; line-height: 1.8; margin-top: 0; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        footer { margin-bottom: 50px; color: #aaa; font-size: 1rem; font-weight: 300; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Happy Anniversary!</h1>
+        <p class="subtitle">Every beautiful moment since she said yes.</p>
+    </header>
+
+    <div class="counter-container">
+        <p class="counter-title">Time we've shared together so far:</p>
+        <div class="time-box" id="timer">
+            <div><span id="days">00</span><span>Days</span></div>
+            <div><span id="hours">00</span><span>Hours</span></div>
+            <div><span id="mins">00</span><span>Mins</span></div>
+            <div><span id="secs">00</span><span>Secs</span></div>
+        </div>
+    </div>
+
+    <div class="audio-wrapper">
+        <audio controls autoplay loop>
+            <source src="voice.mp4" type="audio/mpeg">
+            <source src="voice.mp4" type="video/mp4">
+        </audio>
+    </div>
+
+    <div class="gallery-wrapper">
+        <div class="scroll-wheel">
+            <div class="polaroid"><img src="image1.jpeg" alt="Memory 1"></div>
+            <div class="polaroid"><img src="image2.jpeg" alt="Memory 2"></div>
+            <div class="polaroid"><img src="image3.jpeg" alt="Memory 3"></div>
+            <div class="polaroid"><img src="image4.jpeg" alt="Memory 4"></div>
+            <div class="polaroid"><img src="image5.jpeg" alt="Memory 5"></div>
+            <div class="polaroid"><img src="image6.jpeg" alt="Memory 6"></div>
+            <div class="polaroid"><img src="image7.jpeg" alt="Memory 7"></div>
+            <div class="polaroid"><img src="image8.jpeg" alt="Memory 8"></div>
+            <div class="polaroid"><img src="image9.jpeg" alt="Memory 9"></div>
+        </div>
+    </div>
+
+    <div class="finale-section">
+        <h2>One Last Thing...</h2>
+        <p style="color: #666;">I wrote a little something just for you.</p>
+        <button class="reveal-btn" id="revealBtn">Read My Message</button>
+        
+        <div id="message-container">
+            <div class="love-letter">
+                <p>
+                    Happy 1st Anniversary! ❤️<br><br>
+                    It feels like just yesterday we were texting at 1 AM, and I was so nervous to ask you to be mine. Looking back through all these photos reminds me of how incredibly lucky I am that you said yes on April 10th. <br><br>
+                    Thank you for every laugh, every late-night conversation, and every perfect memory we've made this past year. You mean everything to me, and I can't wait to make so many more memories just like these.
+                </p>
+                <p style="font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0; text-align: right;">
+                    Deepanshu
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>Made with ❤️ by Deepanshu</footer>
+
+    <script>
+        // Set exactly to April 10, 2025 at 01:11:00 AM
+        const anniversaryDate = new Date("April 10, 2025 01:11:00").getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = now - anniversaryDate;
+
+            if (diff < 0) {
+                document.getElementById("days").innerText = "0";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("mins").innerText = "00";
+                document.getElementById("secs").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("mins").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("secs").innerText = seconds.toString().padStart(2, '0');
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer(); 
+
+        document.getElementById('revealBtn').addEventListener('click', function() {
+            this.style.display = 'none'; 
+            document.getElementById('message-container').style.display = 'block'; 
+            setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
+        });
+    </script>
+</body>
+</html>

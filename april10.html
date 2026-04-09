@@ -3,208 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>April 10th: The Answer</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>April 10th | The Yes</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
         :root {
-            --bg-primary: #1e1f22;
-            --bg-secondary: #2b2d31;
-            --text-normal: #dbdee1;
-            --accent-green: #23a559;
-            --rat-color: #ff73fa;
+            --my-msg: #ff4b72; 
+            --her-msg: #ffe3e8; 
+            --bg-color: #fff0f3;
+            --text-dark: #333;
+            --text-light: #fff;
         }
 
-        body { 
-            background-color: var(--bg-primary); 
-            color: var(--text-normal); 
-            font-family: 'gg sans', sans-serif; 
-            margin: 0; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            height: 100vh; 
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
         }
 
-        /* Screens & Transitions */
-        .screen { 
-            position: fixed; width: 100%; height: 100%; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: opacity 1.5s ease-in-out; 
-            z-index: 10;
-        }
-        .hidden { opacity: 0; pointer-events: none; }
-        .active { opacity: 1; pointer-events: all; }
-
-        /* Buttons */
-        .btn { 
-            background: var(--accent-green); color: white; 
-            padding: 18px 45px; border: none; border-radius: 8px; 
-            font-size: 1.3rem; font-weight: bold; cursor: pointer; 
-            box-shadow: 0 8px 25px rgba(35, 165, 89, 0.4); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 30px rgba(35, 165, 89, 0.6); }
-
-        /* Discord Chat Container */
-        #chat-container { 
-            width: 100%; max-width: 650px; height: 85vh; 
-            overflow-y: auto; padding: 40px 20px; display: none; flex-direction: column; 
-            scroll-behavior: smooth;
-        }
-        #chat-container::-webkit-scrollbar { width: 6px; }
-        #chat-container::-webkit-scrollbar-thumb { background: #111214; border-radius: 10px; }
-
-        /* Messages */
-        .msg { 
-            margin-bottom: 20px; display: flex; flex-direction: column;
-            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
-            opacity: 0; transform: translateY(20px);
-        }
-        .header { display: flex; align-items: baseline; margin-bottom: 4px; }
-        .user { font-weight: bold; font-size: 1.1rem; margin-right: 10px; }
-        .time { font-size: 0.75rem; color: #80848e; }
-        .text { font-size: 1.05rem; line-height: 1.5; white-space: pre-wrap; color: #e3e5e8; }
-
-        /* THE BIG YES EFFECT */
-        .yes-glow {
-            color: #58f287 !important;
-            font-size: 1.5rem !important;
-            font-weight: 800;
-            text-shadow: 0 0 15px rgba(88, 242, 135, 0.6), 0 0 30px rgba(88, 242, 135, 0.4);
-            animation: pulseGlow 2s infinite alternate;
+        /* --- Start Screen to Trigger Audio --- */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 200;
         }
 
-        /* Final Screen */
-        .final-card {
-            background: linear-gradient(145deg, #1e1f22, #111214);
-            padding: 50px; border-radius: 20px;
-            border: 1px solid rgba(88, 242, 135, 0.2);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .final-img {
-            width: 280px; height: 280px; object-fit: cover;
-            border-radius: 50%; border: 6px solid #58f287;
-            box-shadow: 0 0 40px rgba(88, 242, 135, 0.5);
-            margin-top: 30px; animation: float 6s ease-in-out infinite;
+        #start-screen h2 {
+            font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--my-msg); margin-bottom: 30px;
         }
 
-        /* Animations */
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulseGlow { from { text-shadow: 0 0 10px rgba(88,242,135,0.4); } to { text-shadow: 0 0 25px rgba(88,242,135,0.8), 0 0 45px rgba(88,242,135,0.6); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        /* --- Phone Chat UI --- */
+        #chat-ui { display: none; width: 100%; display: flex; justify-content: center; }
 
+        .phone-container {
+            width: 100%; max-width: 600px; background-color: #fff;
+            min-height: 100vh; box-shadow: 0 0 20px rgba(255, 75, 114, 0.1);
+            position: relative; padding-bottom: 80px;
+        }
+
+        .chat-header {
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 20px; text-align: center; border-bottom: 1px solid #ffe3e8;
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .chat-header h2 { margin: 0; font-size: 1.3rem; color: var(--my-msg); }
+        .chat-header p { margin: 2px 0 0; font-size: 0.85rem; color: #888; }
+
+        .chat-window { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .timestamp { text-align: center; font-size: 0.75rem; color: #aaa; margin: 10px 0; }
+
+        .msg-row { display: flex; width: 100%; opacity: 0; transform: translateY(20px); transition: all 0.6s ease; flex-direction: column;}
+        .msg-row.visible { opacity: 1; transform: translateY(0); }
+        .msg-row.me { align-items: flex-end; }
+        .msg-row.her { align-items: flex-start; }
+
+        .bubble { 
+            max-width: 80%; padding: 12px 18px; border-radius: 20px; font-size: 1rem; line-height: 1.5; 
+            white-space: pre-wrap; font-family: 'Poppins', sans-serif; transition: all 0.3s ease;
+        }
+        .bubble.me { background-color: var(--my-msg); color: var(--text-light); border-bottom-right-radius: 4px; }
+        .bubble.her { background-color: var(--her-msg); color: var(--text-dark); border-bottom-left-radius: 4px; }
+        
+        /* THE BIG PROPOSAL HIGHLIGHT */
+        .highlight-proposal {
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: 2px solid var(--my-msg);
+            box-shadow: 0 5px 15px rgba(255, 75, 114, 0.4);
+            transform: scale(1.02);
+        }
+
+        .msg-time { font-size: 0.7rem; color: #bbb; margin-top: 4px; padding: 0 5px; }
+
+        .typing-indicator {
+            display: none; align-items: center; gap: 5px;
+            padding: 12px 18px; background-color: var(--her-msg); border-radius: 20px;
+            width: fit-content; margin-bottom: 15px; border-bottom-left-radius: 4px;
+        }
+        .dot { width: 6px; height: 6px; background: #ff4b72; border-radius: 50%; animation: bounce 1.4s infinite; opacity: 0.6; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .redirect-container { text-align: center; margin-top: 50px; display: none; animation: fadeIn 1.5s; padding-bottom: 40px;}
+
+        .next-btn {
+            background-color: var(--my-msg); color: white; border: none;
+            padding: 18px 40px; border-radius: 30px; font-weight: 600; font-family: 'Poppins', sans-serif;
+            display: inline-block; transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 75, 114, 0.4); font-size: 1.2rem; cursor: pointer; text-decoration: none;
+        }
+        .next-btn:hover { transform: scale(1.05); }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <audio id="successSong" src="success.mp3" preload="auto"></audio>
+    <audio id="bg-music" loop>
+        <source src="Raabta.mp3" type="audio/mpeg">
+    </audio>
 
-    <div id="intro" class="screen active" style="background: radial-gradient(circle, #2b2d31 0%, #111214 100%);">
-        <h1 style="color:white; font-size: 3rem; margin-bottom:10px; letter-spacing: 2px;">39 Days Later...</h1>
-        <p style="color:#80848e; font-size: 1.2rem; margin-bottom:50px;">April 10th, 2025 • 01:11 AM</p>
-        <button class="btn" onclick="startApril()">Unlock The Memory</button>
+    <div id="start-screen">
+        <h2>Are you ready?</h2>
+        <button class="next-btn" onclick="startExperience()">Open Our Story</button>
     </div>
 
-    <div id="chat-container"></div>
+    <div id="chat-ui" style="display: none;">
+        <div class="phone-container">
+            <div class="chat-header">
+                <h2>Priyasha ❤️</h2>
+                <p>April 10, 2025</p>
+            </div>
 
-    <div id="finale" class="screen hidden"></div>
+            <div class="chat-window" id="chat">
+                <div id="typing" class="typing-indicator">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+
+                <div class="redirect-container" id="redirect-btn">
+                    <a href="anniversary.html" class="next-btn">See Our Year ❤️ &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // EXACT TRANSCRIPT FROM YOUR SCREENSHOTS
-        const SCRIPT = [
-            { u: "rat", n: "THE UNDESERVED RAT 🐀 cute", c: "var(--rat-color)", t: "Miss Priyasha", time: "01:11 AM" },
-            { u: "rat", n: "THE UNDESERVED RAT 🐀 cute", c: "var(--rat-color)", t: "Will you be a part of my heart, a beauty I desire, the happiness I want, my legs that help me stand and my hands that can touch you, my everything to you...", time: "01:11 AM" },
-            { u: "rat", n: "THE UNDESERVED RAT 🐀 cute", c: "var(--rat-color)", t: "Will you be my girlfriend?", time: "01:11 AM", pause: 2500 }, // Suspense pause
-            { u: "cat", n: "Katerina 🐈‍⬛ cute", c: "#ffffff", t: "Mr Deepanshu", time: "01:12 AM" },
-            { u: "cat", n: "Katerina 🐈‍⬛ cute", c: "#ffffff", t: "I am ready to be yourss !!\nI ammm\ntakee me withh youuu", time: "01:12 AM" },
-            // THE BIG MOMENT
-            { u: "cat", n: "Katerina 🐈‍⬛ cute", c: "#ffffff", t: "Its a YESSS OFCCC", time: "01:12 AM", isYes: true, pause: 3500 },
-            { u: "rat", n: "THE UNDESERVED RAT 🐀 cute", c: "var(--rat-color)", t: "I love you", time: "01:12 AM" },
-            { u: "cat", n: "Katerina 🐈‍⬛ cute", c: "#ffffff", t: "i lovee you tooo", time: "01:12 AM" },
-            { u: "rat", n: "THE UNDESERVED RAT 🐀 cute", c: "var(--rat-color)", t: "I love you so much", time: "01:12 AM" }
+        const chatData = [
+            { u: 'me', t: "We can get in a relationship fr\nBut one time we can meet\nWhat will ur parents say if u ask them ki I want to celebrate bday wuth my friends once outside\nBecause I didn't celebrate", time: "00:58" },
+            { u: 'her', t: "vohh toh keh hi rahee hain\nnow ab meri classes lag gyi hain\nkoi bhi free nhi hai\nsabki classes hain\nkoii nhi arha\nso its cancelled", time: "01:00" },
+            { u: 'me', t: "😭😭😭😭🥺🥺", time: "01:01" },
+            { u: 'her', t: "😭😭😭ikkk acha khaasa plan", time: "01:01" },
+            { u: 'me', t: "Koi nahi we'll have online dates", time: "01:02" },
+            { u: 'her', t: "yuppp butt", time: "01:03" },
+            { u: 'me', t: "Koi nahi we'll have fun online", time: "01:03" },
+            { u: 'her', t: "kya karnaa hai\nlike milke hi karna hai start\nya abhi you wannaa", time: "01:03" },
+            { u: 'me', t: "Im not sure as well😭😭\nI can start now and I can start after we meet", time: "01:05" },
+            { u: 'her', t: "can we start now ??\nmilke firse kardena propose 🥺\nI dont wanna waste our days like that\nkab milengn sahi mein nhi pata 😭😭", time: "01:06" },
+            { u: 'me', t: "Yes\nI already consider u my other half\nMy girlfriend\nMaybe more than a girlfriend", time: "01:07" },
+            { u: 'her', t: "😭😭😭❤️\ni consider you tooo baby\njust that we needed that official procedure thing", time: "01:07" },
+            { u: 'me', t: "Oh Iwill propose to you when we meet irl\nStraight uppp", time: "01:08" },
+            { u: 'her', t: "i will dooo", time: "01:08" },
+            { u: 'me', t: "So", time: "01:09" },
+            { u: 'her', t: "sooo", time: "01:09" },
+            // THE PROPOSAL - Highlights are marked true
+            { u: 'me', t: "Miss Priyasha\nWill you be a part of my heart, a beauty I desire, the happiness I want, my legs that help me stand and my hands that can touch you, my everything to you...\nWill you be my girlfriend?", time: "01:11", highlight: true },
+            { u: 'her', t: "Mr Deepanshu\nI am ready to be yourss !!\nI ammm\ntakee me withh youuu\nIts a YESSS OFCCC", time: "01:12", highlight: true },
+            { u: 'me', t: "I love you", time: "01:12" },
+            { u: 'her', t: "i lovee you tooo", time: "01:12" },
+            { u: 'me', t: "I love you so much", time: "01:12" }
         ];
 
-        function startApril() {
-            document.getElementById('intro').classList.remove('active');
-            document.getElementById('intro').classList.add('hidden');
+        const chatWindow = document.getElementById('chat');
+        const typingIndicator = document.getElementById('typing');
+        const redirectBtn = document.getElementById('redirect-btn');
+
+        function startExperience() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('chat-ui').style.display = 'flex';
             
-            setTimeout(() => {
-                const chat = document.getElementById('chat-container');
-                chat.style.display = 'flex';
-                playLines(0);
-            }, 1000);
+            // Start the music
+            const music = document.getElementById('bg-music');
+            music.volume = 0.6; // Not too loud so she can read
+            music.play().catch(e => console.log("Audio play issue"));
+
+            setTimeout(() => playChat(0), 1500);
         }
 
-        function playLines(index) {
-            if (index >= SCRIPT.length) {
-                setTimeout(showFinalCard, 3000);
+        function playChat(index) {
+            if (index >= chatData.length) {
+                setTimeout(() => {
+                    redirectBtn.style.display = 'block';
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }, 2000); // 2 second pause before final button
                 return;
             }
+
+            const msg = chatData[index];
+            const isHer = msg.u === 'her';
             
-            const line = SCRIPT[index];
-            const chat = document.getElementById('chat-container');
-            const div = document.createElement('div');
-            div.className = 'msg';
-            
-            // Format the text with the glowing class if it's the big YES
-            let textClass = line.isYes ? "text yes-glow" : "text";
-            
-            div.innerHTML = `
-                <div class="header">
-                    <span class="user" style="color:${line.c}">${line.n}</span>
-                    <span class="time">${line.time}</span>
-                </div>
-                <div class="${textClass}">${line.t}</div>
-            `;
-            
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight; // Auto-scroll to bottom
-            
-            // If this is the YES message, trigger song and massive confetti
-            if (line.isYes) {
-                document.getElementById('successSong').volume = 0.6;
-                document.getElementById('successSong').play().catch(e => console.log("Audio blocked"));
-                
-                // Double confetti blast!
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, zIndex: 100 });
-                setTimeout(() => confetti({ particleCount: 150, spread: 120, origin: { y: 0.5 }, zIndex: 100 }), 500);
+            if (isHer) {
+                typingIndicator.style.display = 'flex';
+                chatWindow.insertBefore(typingIndicator, redirectBtn);
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             }
 
-            // Calculate delay: Standard 1.5s, plus any custom pause for suspense
-            let delay = 1500 + (line.pause || 0);
-            setTimeout(() => playLines(index + 1), delay);
-        }
+            // SLOWED DOWN SPEED CALCULATION
+            // Base delay + extra delay per character. Much slower now.
+            let delay = isHer ? 2000 + (msg.t.length * 50) : 1500 + (msg.t.length * 40);
+            
+            // Add a massive pause on the highlighted proposal messages to let them sink in
+            if (msg.highlight) {
+                delay += 3000; 
+            }
 
-        function showFinalCard() {
-            // Fade out chat
-            document.getElementById('chat-container').style.opacity = '0';
-            document.getElementById('chat-container').style.pointerEvents = 'none';
-            
-            // Setup and fade in final screen
-            const finale = document.getElementById('finale');
-            finale.innerHTML = `
-                <div class="final-card">
-                    <h1 style="font-size:3.5rem; color:white; margin:0; text-shadow: 0 0 20px rgba(255,255,255,0.5);">1 Year of Us ❤️</h1>
-                    <p style="font-size:1.4rem; color:#80848e; margin-top:10px;">Happy Anniversary, Deepanshu & Priyasha.</p>
-                    <img src="pic5.png" class="final-img" alt="Us">
-                </div>
-            `;
-            
             setTimeout(() => {
-                finale.classList.remove('hidden');
-                finale.classList.add('active');
+                typingIndicator.style.display = 'none';
+
+                const row = document.createElement('div');
+                row.className = `msg-row ${msg.u}`;
                 
-                // Continuous slow confetti rain
-                var end = Date.now() + (15 * 1000);
-                (function frame() {
-                    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#58f287', '#ffffff'] });
-                    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#58f287', '#ffffff'] });
-                    if (Date.now() < end) { requestAnimationFrame(frame); }
-                }());
-            }, 1000);
+                // Add highlight class if needed
+                let bubbleClass = `bubble ${msg.u}`;
+                if (msg.highlight) {
+                    bubbleClass += ` highlight-proposal`;
+                }
+
+                row.innerHTML = `
+                    <div class="${bubbleClass}">${msg.t}</div>
+                    <div class="msg-time">${msg.time}</div>
+                `;
+
+                chatWindow.insertBefore(row, typingIndicator);
+                
+                setTimeout(() => row.classList.add('visible'), 50);
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+                playChat(index + 1);
+
+            }, delay);
         }
     </script>
 </body>
