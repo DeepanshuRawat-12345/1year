@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>March 2nd: The Proposal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #313338;
+            --bg-secondary: #2b2d31;
+            --header-primary: #f2f3f5;
+            --text-normal: #dbdee1;
+            --rat-color: #ff73fa;
+            --accent: #ff4d6d; 
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-normal);
+            font-family: 'gg sans', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SCREENS --- */
+        .screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            transition: opacity 1s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .hidden { opacity: 0; pointer-events: none; }
+        .active { opacity: 1; pointer-events: all; }
+
+        /* --- 1. START SCREEN --- */
+        #screen-start { background: linear-gradient(135deg, #000, #1a1a1a); z-index: 50; }
+        
+        .title-anim { font-size: 2rem; color: white; margin-bottom: 20px; animation: popIn 1s ease; }
+        .btn {
+            background: var(--accent); color: white;
+            padding: 12px 30px; border: none; border-radius: 5px;
+            font-size: 1.2rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s;
+            z-index: 1000;
+        }
+        .btn:hover { transform: scale(1.05); }
+
+        /* --- 2. CHAT SCREEN --- */
+        #screen-chat { 
+            background: var(--bg-primary); 
+            justify-content: flex-start;
+            padding-top: 60px;
+            position: relative;
+        }
+
+        .chat-header {
+            position: absolute; top: 0; width: 100%; height: 50px;
+            border-bottom: 1px solid #26272d;
+            display: flex; align-items: center; padding-left: 20px;
+            font-weight: bold; color: white; background: #313338; z-index: 5;
+        }
+
+        .scroller {
+            width: 100%; max-width: 600px; flex: 1;
+            overflow-y: auto; padding: 20px 10px;
+            padding-bottom: 120px;
+            display: flex; flex-direction: column; scroll-behavior: smooth;
+        }
+        .scroller::-webkit-scrollbar { width: 5px; }
+        .scroller::-webkit-scrollbar-thumb { background: #222; }
+
+        /* Messages */
+        .message-group { margin-top: 15px; display: flex; padding: 2px 10px; animation: fadeUp 0.5s ease forwards; opacity: 0; }
+        .message-group.chained { margin-top: 2px; }
+        
+        .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; background-size: cover; flex-shrink: 0; }
+        .chained .avatar { opacity: 0; }
+
+        .content { flex: 1; }
+        .username { font-weight: 500; font-size: 1rem; margin-right: 8px; }
+        .timestamp { font-size: 0.75rem; color: #949ba4; }
+        .msg-text { font-size: 1rem; line-height: 1.4; color: #dbdee1; white-space: pre-wrap; }
+        
+        .highlight { color: #ff4d6d; font-weight: bold; text-shadow: 0 0 10px rgba(255, 77, 109, 0.5); }
+
+        /* Typing Indicator */
+        .typing-bar { 
+            position: absolute; bottom: 85px; left: 20px;
+            display: none; align-items: center; 
+            color: #dbdee1; font-size: 0.85rem; pointer-events: none;
+            z-index: 10;
+        }
+        .dots { display: inline-flex; margin-right: 8px; align-items: center; height: 100%; }
+        .dot { width: 5px; height: 5px; background: #dbdee1; border-radius: 50%; margin: 0 1px; animation: bounce 1.4s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* PART 2 BUTTON */
+        #part2Btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 200;
+        }
+
+        /* --- 3. INTERMISSION SCREEN --- */
+        #screen-intermission { background: black; text-align: center; }
+        .tbc { font-size: 2.5rem; color: white; margin-bottom: 10px; }
+        .sub-date { color: #888; margin-bottom: 40px; }
+
+        /* --- 4. GALLERY SCREEN --- */
+        #screen-gallery { background: #111; overflow: hidden; }
+        
+        .gallery-container {
+            width: 100%; height: 350px;
+            display: flex; align-items: center;
+            overflow-x: hidden; 
+            position: relative;
+            background: #000;
+        }
+        
+        .gallery-track {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px;
+            animation: scrollLeft 25s linear infinite;
+        }
+        .gallery-track:hover { animation-play-state: paused; }
+
+        .gallery-img {
+            height: 300px; width: auto;
+            border-radius: 10px;
+            border: 2px solid #333;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .gallery-img:hover { transform: scale(1.05); border-color: var(--accent); }
+
+        .voice-box {
+            margin-top: 30px; padding: 20px;
+            border: 1px solid var(--accent); border-radius: 20px;
+            color: white; text-align: center;
+        }
+
+        /* Keyframes */
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes fadeUp { to { opacity: 1; } }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.9); } 100% { opacity:1; transform:scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    </style>
+</head>
+<body>
+
+    <audio id="songPlayer" src="song.mp3" preload="auto"></audio>
+    <audio id="voicePlayer" src="voice.mp4" preload="auto"></audio>
+
+    <div id="screen-start" class="screen active">
+        <div class="title-anim">March 2nd, 2025</div>
+        <p style="color: #aaa; margin-bottom: 30px;">4:29 AM</p>
+        <button class="btn" onclick="goToChat()">Open Message</button>
+    </div>
+
+    <div id="screen-chat" class="screen hidden">
+        <div class="chat-header">
+            <span style="color:#888; margin-right: 10px;">#</span> proposal-history
+        </div>
+        
+        <div class="scroller" id="chatLog"></div>
+        
+        <div class="typing-bar" id="typingBar">
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            <span id="typingName">Katerina</span> is typing...
+        </div>
+
+        <div id="part2Btn">
+            <button class="btn" onclick="goToIntermission()">Proceed to Part 2 &rarr;</button>
+        </div>
+    </div>
+
+    <div id="screen-intermission" class="screen hidden">
+        <div class="tbc">To Be Continued...</div>
+        <div class="sub-date">She said yes on April 10th</div>
+        <button class="btn" onclick="goToGallery()">See The Memories</button>
+    </div>
+
+    <div id="screen-gallery" class="screen hidden">
+        <h2 style="color:white; margin-bottom:20px;">Our Year ❤️</h2>
+        
+        <div class="gallery-container">
+            <div class="gallery-track">
+                <img src="pic1.jpeg" class="gallery-img">
+                <img src="pic2.jpeg" class="gallery-img">
+                <img src="pic3.jpeg" class="gallery-img">
+                <img src="pic4.jpeg" class="gallery-img">
+                <img src="pic5.png" class="gallery-img">
+                <img src="pic1.jpeg" class="gallery-img">
+                <img src="pic2.jpeg" class="gallery-img">
+                <img src="pic3.jpeg" class="gallery-img">
+                <img src="pic4.jpeg" class="gallery-img">
+                <img src="pic5.png" class="gallery-img">
+            </div>
+        </div>
+
+        <div class="voice-box">
+            <p>🎤 Playing Voice Note...</p>
+            <br>
+            <button class="btn" style="background: #248046; margin-top: 20px; animation: bounce 2s infinite;" onclick="window.location.href='april10.html'">
+                Wait... what happened on April 10th? &rarr;
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const USERS = {
+            rat: { name: "THE UNDESERVED RAT 🐀 cute", color: "#ff73fa", avatar: "https://cdn-icons-png.flaticon.com/512/2361/2361683.png" },
+            cat: { name: "Katerina 🐈‍⬛ cute", color: "#ffffff", avatar: "https://cdn-icons-png.flaticon.com/512/616/616430.png" }
+        };
+
+        const SCRIPT = [
+            { u: 'rat', t: "What will happen if I say ily sleep well or sleep well mil!?!?", time: "04:29 AM" },
+            { u: 'cat', t: "kyaa hogaa ? 😭mein so jaungin aur kya", time: "04:29 AM" },
+            { u: 'cat', t: "but mujhe kyu bologe", time: "04:29 AM" },
+            { u: 'rat', t: "Lmaoo why not😼", time: "04:29 AM" },
+            { u: 'cat', t: "why why", time: "04:29 AM" },
+            { u: 'rat', t: "I dunno how to say it thoo 😭", time: "04:30 AM" },
+            { u: 'cat', t: "dont say itt", time: "04:31 AM" },
+            { u: 'cat', t: "a good night was enoughh", time: "04:31 AM" },
+            { u: 'rat', t: "What about after April then 😼", time: "04:31 AM" },
+            { u: 'rat', t: "What if i like you 😼", time: "04:31 AM", highlight: true, pause: 3000 },
+            { u: 'cat', t: "like me ?", time: "04:33 AM", pause: 2500 },
+            { u: 'cat', t: "you are jk or ....", time: "04:33 AM" },
+            { u: 'rat', t: "What if the latter one 😼", time: "04:34 AM" },
+            { u: 'cat', t: "see tell me honestly ...", time: "04:34 AM" },
+            { u: 'rat', t: "What if I did have fun today and whatever I said was tru", time: "04:36 AM" },
+            { u: 'cat', t: "likee what ....", time: "04:36 AM" },
+            { u: 'cat', t: "come straight to the point", time: "04:36 AM" },
+            { u: 'cat', t: "this aint a what if series show", time: "04:36 AM" },
+            { u: 'rat', t: "I do like u", time: "04:36 AM" },
+            { u: 'rat', t: "The meeting and the time we shared", time: "04:36 AM" },
+            { u: 'rat', t: "Coz I want ya to be appyyy", time: "04:36 AM" }
+        ];
+
+        let lastUser = null;
+        let hasConfessed = false; 
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => { s.classList.replace('active', 'hidden'); });
+            document.getElementById(id).classList.replace('hidden', 'active');
+        }
+
+        function goToChat() {
+            switchScreen('screen-chat');
+            setTimeout(() => playLine(0), 1000);
+        }
+
+        function playLine(index) {
+            if (index >= SCRIPT.length) {
+                document.getElementById('part2Btn').style.display = 'block';
+                return;
+            }
+
+            const line = SCRIPT[index];
+            const userCfg = USERS[line.u];
+            const typingBar = document.getElementById('typingBar');
+            
+            document.getElementById('typingName').innerText = userCfg.name.split(' ')[0];
+            typingBar.style.display = 'flex';
+            
+            const chatLog = document.getElementById('chatLog');
+            chatLog.scrollTop = chatLog.scrollHeight;
+
+            let typingDuration = 1000 + (line.t.length * 50);
+            if (hasConfessed) typingDuration *= 2.2; 
+            if (line.pause) typingDuration += line.pause;
+
+            setTimeout(() => {
+                typingBar.style.display = 'none';
+                renderMessage(line, userCfg);
+                
+                if (line.highlight) {
+                    const song = document.getElementById('songPlayer');
+                    song.volume = 0.5;
+                    song.play().catch(e => console.log("Audio play blocked"));
+                    hasConfessed = true; 
+                }
+
+                setTimeout(() => playLine(index + 1), hasConfessed ? 1500 : 800); 
+            }, typingDuration);
+        }
+
+        function renderMessage(line, userCfg) {
+            const chatLog = document.getElementById('chatLog');
+            const isChained = lastUser === line.u;
+            lastUser = line.u;
+            const div = document.createElement('div');
+            div.className = `message-group ${isChained ? 'chained' : ''}`;
+            
+            let header = !isChained ? `<div style="margin-bottom:2px;"><span class="username" style="color:${userCfg.color}">${userCfg.name}</span><span class="timestamp">${line.time}</span></div>` : '';
+            let avatarStyle = `background-image: url('${userCfg.avatar}')` + (isChained ? '; opacity:0' : '');
+
+            div.innerHTML = `<div class="avatar" style="${avatarStyle}"></div><div class="content">${header}<div class="msg-text ${line.highlight ? 'highlight' : ''}">${line.t}</div></div>`;
+            chatLog.appendChild(div);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function goToIntermission() { switchScreen('screen-intermission'); }
+
+        function goToGallery() {
+            switchScreen('screen-gallery');
+
+            // 1. STOP MUSIC
+            const song = document.getElementById('songPlayer');
+            song.pause();
+            song.currentTime = 0;
+
+            // 2. PLAY VOICE NOTE (MP4)
+            const voice = document.getElementById('voicePlayer');
+            voice.volume = 1.0;
+            voice.play().catch(e => console.log("Voice blocked"));
+        }
+    </script>
+</body>
+</html>
